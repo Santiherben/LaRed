@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Red: El viaje de los paquetes de datos en Internet</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            color: #2d3748;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .journey-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .journey-line {
+            position: absolute;
+            height: 8px;
+            background: linear-gradient(90deg, #3182ce, #63b3ed);
+            border-radius: 4px;
+            z-index: 1;
+            transition: width 1.5s ease-in-out;
+        }
+        .journey-station {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .journey-station:hover {
+            transform: scale(1.05);
+        }
+        .journey-station.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(49, 130, 206, 0.7);
+        }
+        .station-info {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .station-info.show {
+            display: block;
+            opacity: 1;
+        }
+        .packet {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #f6ad55;
+            border-radius: 5px;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 1s ease-in-out;
+            left: 0;
+            top: -11px;
+        }
+        .section-card {
+            transition: all 0.3s ease;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #cbd5e0;
+            margin: 0 4px;
+            transition: all 0.3s ease;
+        }
+        .progress-dot.active {
+            background-color: #3182ce;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="pb-16">
+    <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 mb-8">
+        <div class="container mx-auto">
+            <h1 class="text-4xl font-bold text-center">La Red</h1>
+            <p class="text-2xl text-center mt-2">El Viaje de los Paquetes de Datos</p>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-10">
+            <h2 class="text-3xl font-bold text-blue-700 mb-4">Introducción</h2>
+            <p class="text-lg mb-4">
+                Por primera vez en la historia, la gente y las máquinas trabajan juntos, cumpliendo un sueño: una unión de fuerzas que no conoce límites geográficos, raza, creencia o color. Una nueva era donde la comunicación verdaderamente lleva a unir a la gente. Esto es <strong>el amanecer de la red</strong>.
+            </p>
+            <p class="text-lg mb-4">
+                Este recurso educativo, inspirado en el clásico video "Guerreros de la Red", te llevará en un viaje fascinante para entender qué sucede exactamente cuando haces clic en un enlace. Descubrirás el mundo de los paquetes de datos, los protocolos, los routers y los firewalls que hacen posible la magia de Internet.
+            </p>
+        </div>
+
+        <div class="mb-16 bg-blue-50 rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4 text-center">El viaje de un paquete de datos</h2>
+            <p class="text-center mb-6">Haz clic en "Iniciar viaje" y luego en cada estación para ver qué sucede en esa parte del recorrido.</p>
+            
+            <div class="relative journey-container h-24 mb-2">
+                <div class="journey-line w-0" id="journey-progress"></div>
+                <div class="packet" id="data-packet">IP</div>
+                
+                <div class="flex justify-between">
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="1">
+                        <i class="fas fa-laptop text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">Tu PC</p>
+                    </div>
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="2">
+                        <i class="fas fa-network-wired text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">LAN</p>
+                    </div>
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="3">
+                        <i class="fas fa-random text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">Router</p>
+                    </div>
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="4">
+                        <i class="fas fa-server text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">Proxy</p>
+                    </div>
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="5">
+                        <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">Firewall</p>
+                    </div>
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="6">
+                        <i class="fas fa-globe text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">Internet</p>
+                    </div>
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="7">
+                        <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">Firewall</p>
+                    </div>
+                    <div class="journey-station bg-blue-100 p-3 rounded-lg text-center w-24" data-step="8">
+                        <i class="fas fa-database text-2xl text-blue-600"></i>
+                        <p class="text-sm mt-1">Servidor</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-dots">
+                <div class="progress-dot" data-step="1"></div>
+                <div class="progress-dot" data-step="2"></div>
+                <div class="progress-dot" data-step="3"></div>
+                <div class="progress-dot" data-step="4"></div>
+                <div class="progress-dot" data-step="5"></div>
+                <div class="progress-dot" data-step="6"></div>
+                <div class="progress-dot" data-step="7"></div>
+                <div class="progress-dot" data-step="8"></div>
+            </div>
+
+            <div class="text-center mb-8">
+                <button id="start-journey" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    Iniciar viaje
+                </button>
+                <button id="reset-journey" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 ml-4 hidden">
+                    Reiniciar
+                </button>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 mt-6">
+                <h3 class="text-xl font-bold text-blue-700 mb-3" id="station-title">Selecciona una estación</h3>
+                <div id="station-1" class="station-info">
+                    <p class="mb-3">Cuando haces clic en un enlace, inicias un flujo de información dentro de tu computador. Esta información necesita ser preparada para viajar por la red.</p>
+                    <p class="mb-3">El <strong>Protocolo de Internet (IP)</strong> se encarga de empaquetar, etiquetar y poner en camino tus datos. Cada paquete es limitado en su tamaño, por lo que a veces un mensaje grande debe dividirse en varios paquetes.</p>
+                    <p>Cada paquete recibe una etiqueta con información importante:</p>
+                    <ul class="list-disc pl-6 mb-3">
+                        <li>Dirección del remitente (tú)</li>
+                        <li>Dirección del destinatario (el servidor)</li>
+                        <li>Tipo de paquete</li>
+                        <li>Información de secuencia</li>
+                    </ul>
+                </div>
+                <div id="station-2" class="station-info">
+                    <p class="mb-3">La <strong>LAN</strong> (Red de Área Local) es el primer entorno al que llega tu paquete después de abandonar tu computadora.</p>
+                    <p class="mb-3">Es una red compartida que conecta todas las computadoras locales, impresoras y otros dispositivos en un área cercana (como tu oficina o casa).</p>
+                    <p class="mb-3">La LAN es un lugar no muy controlado donde pueden ocurrir "accidentes". Está repleta de todo tipo de información: paquetes IP, paquetes Novell, paquetes Apple, etc.</p>
+                    <p>Aquí el tráfico puede ser intenso y los paquetes deben competir por espacio en la red.</p>
+                </div>
+                <div id="station-3" class="station-info">
+                    <p class="mb-3">El <strong>Router</strong> local es como un oficial de tránsito en un mundo desordenado.</p>
+                    <p class="mb-3">Su trabajo es leer las direcciones de los paquetes y, si es necesario, colocarlos en otra red.</p>
+                    <p class="mb-3">El router es sistemático, desinteresado, metódico y conservador. A veces no es precisamente rápido, pero es exacto y profesional.</p>
+                    <p>Después del router, los paquetes siguen su camino a través de la intranet o red corporativa.</p>
+                </div>
+                <div id="station-4" class="station-info">
+                    <p class="mb-3">El <strong>Proxy</strong> es un intermediario entre tu red interna e Internet.</p>
+                    <p class="mb-3">Tiene dos funciones principales:</p>
+                    <ul class="list-disc pl-6 mb-3">
+                        <li>Establecer y compartir una única conexión a Internet entre varios usuarios</li>
+                        <li>Proporcionar seguridad adicional</li>
+                    </ul>
+                    <p class="mb-3">El proxy abre tu paquete y busca la dirección web (URL) solicitada. Dependiendo de si la dirección es admisible según las políticas corporativas, el paquete se enviará hacia Internet o será rechazado.</p>
+                    <p>Los proxies a menudo también almacenan en caché páginas web populares para acelerar las solicitudes futuras.</p>
+                </div>
+                <div id="station-5" class="station-info">
+                    <p class="mb-3">El <strong>Firewall</strong> corporativo sirve como guardián entre tu red interna e Internet.</p>
+                    <p class="mb-3">Tiene dos propósitos principales:</p>
+                    <ul class="list-disc pl-6 mb-3">
+                        <li>Prevenir intromisiones indeseables provenientes de Internet</li>
+                        <li>Evitar que información delicada de tu red sea enviada hacia Internet</li>
+                    </ul>
+                    <p>Una vez que el paquete pasa el firewall, un router lo coloca en un "ancho de banda" (como es llamado), que suele ser mucho más estrecho que la red interna. Esta es la puerta de entrada a Internet.</p>
+                </div>
+                <div id="station-6" class="station-info">
+                    <p class="mb-3"><strong>Internet</strong> es una telaraña de redes interconectadas que se extiende por todo el mundo.</p>
+                    <p class="mb-3">Routers y switches establecen enlaces entre las redes. Es un ambiente completamente distinto de lo que encontramos dentro de nuestra red local - "el salvaje oeste" con abundante espacio y oportunidades.</p>
+                    <p class="mb-3">Las rutas que pueden tomar los paquetes incluyen:</p>
+                    <ul class="list-disc pl-6 mb-3">
+                        <li>Satélites</li>
+                        <li>Líneas telefónicas</li>
+                        <li>Cables transoceánicos</li>
+                    </ul>
+                    <p class="mb-3">Los paquetes no siempre toman el camino más corto, pero de cualquier modo llegarán a su destino.</p>
+                    <p>En Internet también existen peligros como el "ping de la muerte", un tipo especial de paquete de interrogación diseñado para interrumpir servidores.</p>
+                </div>
+                <div id="station-7" class="station-info">
+                    <p class="mb-3">En el destino, nuestro paquete encuentra el <strong>Firewall</strong> del servidor que protege el sitio web.</p>
+                    <p class="mb-3">Este firewall está diseñado para dejar entrar solamente aquellos paquetes que cumplen con criterios específicos de seguridad.</p>
+                    <p class="mb-3">Los firewalls de servidores web suelen tener abiertos:</p>
+                    <ul class="list-disc pl-6 mb-3">
+                        <li>Puerto 80 (para tráfico web HTTP)</li>
+                        <li>Puerto 25 (para paquetes de correo)</li>
+                    </ul>
+                    <p class="mb-3">Dentro del firewall, los paquetes son filtrados concienzudamente. Algunos pasan fácilmente y otros son inspeccionados con más detalle.</p>
+                    <p>El oficial del firewall está entrenado para detectar paquetes maliciosos, como el "ping de la muerte" que podría intentar hacerse pasar por un paquete normal.</p>
+                </div>
+                <div id="station-8" class="station-info">
+                    <p class="mb-3">Finalmente, los paquetes llegan al <strong>Servidor Web</strong>, que puede ejecutarse en diversos dispositivos, desde mainframes hasta computadoras de escritorio.</p>
+                    <p class="mb-3">Uno por uno, los paquetes son recibidos y desempacados. La información que contienen (nuestra solicitud) es enviada a la aplicación del servidor web.</p>
+                    <p class="mb-3">El paquete en sí es reciclado, listo para ser usado nuevamente y llenado con la información solicitada (como la página web).</p>
+                    <p class="mb-3">Luego, estos nuevos paquetes con la respuesta son enviados de regreso hacia nosotros, realizando el viaje en sentido inverso:</p>
+                    <ul class="list-disc pl-6 mb-3">
+                        <li>Firewall del servidor → Internet → Firewall corporativo → Router → Tu computadora</li>
+                    </ul>
+                    <p>Al llegar a tu computadora, los paquetes son entregados a tu navegador web, que muestra la información solicitada (la página web).</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <div class="section-card bg-white rounded-lg overflow-hidden shadow-lg">
+                <div class="bg-blue-700 text-white p-4">
+                    <h3 class="text-xl font-bold">¿Por qué se dividen los datos en paquetes?</h3>
+                </div>
+                <div class="p-6">
+                    <p class="mb-4">La división de datos en paquetes pequeños ofrece varios beneficios:</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>Permite que múltiples usuarios compartan la misma conexión simultáneamente</li>
+                        <li>Si un paquete se pierde, solo es necesario reenviar ese paquete, no toda la información</li>
+                        <li>Los paquetes pueden tomar diferentes rutas, optimizando el uso de la red</li>
+                        <li>Facilita la detección y corrección de errores</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-card bg-white rounded-lg overflow-hidden shadow-lg">
+                <div class="bg-blue-700 text-white p-4">
+                    <h3 class="text-xl font-bold">Protocolos de Internet</h3>
+                </div>
+                <div class="p-6">
+                    <p class="mb-4">Los protocolos son reglas que definen cómo se comunican los dispositivos en la red:</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>IP (Protocolo de Internet):</strong> Se encarga del direccionamiento y enrutamiento de paquetes</li>
+                        <li><strong>TCP (Protocolo de Control de Transmisión):</strong> Garantiza la entrega correcta y ordenada de los paquetes</li>
+                        <li><strong>HTTP/HTTPS:</strong> Utilizado para la transferencia de páginas web</li>
+                        <li><strong>DNS:</strong> Convierte nombres de dominio en direcciones IP</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div class="section-card bg-white rounded-lg overflow-hidden shadow-lg">
+                <div class="bg-green-600 text-white p-4">
+                    <h3 class="text-xl font-bold">Amenazas en la Red</h3>
+                </div>
+                <div class="p-6">
+                    <p class="mb-4">Algunas amenazas comunes en Internet:</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Ping de la muerte:</strong> Mencionado en el video, es un tipo de ataque que puede bloquear servidores</li>
+                        <li><strong>Ataques DDoS:</strong> Inundan los servidores con tráfico para dejarlos fuera de servicio</li>
+                        <li><strong>Malware:</strong> Software diseñado para dañar o infiltrarse en sistemas</li>
+                        <li><strong>Phishing:</strong> Intenta engañarte para que reveles información sensible</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-card bg-white rounded-lg overflow-hidden shadow-lg">
+                <div class="bg-green-600 text-white p-4">
+                    <h3 class="text-xl font-bold">Velocidad y Rendimiento</h3>
+                </div>
+                <div class="p-6">
+                    <p class="mb-4">Factores que afectan la velocidad de Internet:</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>Ancho de banda de tu conexión</li>
+                        <li>Congestión de la red</li>
+                        <li>Distancia física al servidor</li>
+                        <li>Capacidad del servidor para manejar solicitudes</li>
+                        <li>Calidad de los routers y switches en la ruta</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-card bg-white rounded-lg overflow-hidden shadow-lg">
+                <div class="bg-green-600 text-white p-4">
+                    <h3 class="text-xl font-bold">Seguridad en la Red</h3>
+                </div>
+                <div class="p-6">
+                    <p class="mb-4">Elementos clave para la seguridad:</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Firewalls:</strong> Filtran el tráfico entrante y saliente</li>
+                        <li><strong>Proxys:</strong> Actúan como intermediarios entre usuarios y servidores</li>
+                        <li><strong>Encriptación:</strong> Protege la información sensible</li>
+                        <li><strong>Actualizaciones:</strong> Mantienen los sistemas protegidos contra vulnerabilidades conocidas</li>
+                        <li><strong>Autenticación:</strong> Verifica la identidad de los usuarios</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-10">
+            <h2 class="text-3xl font-bold text-blue-700 mb-4">Conclusión</h2>
+            <p class="text-lg mb-4">
+                El video "¿Cómo funciona Internet?" nos muestra de manera didáctica y entretenida el funcionamiento básico de Internet. Cada vez que haces clic en un enlace, inicias un viaje fascinante para tus datos a través de múltiples dispositivos y redes.
+            </p>
+            <p class="text-lg mb-4">
+                Internet es una maravilla de la ingeniería y la cooperación humana, que permite la comunicación instantánea a escala global. Entender cómo funciona nos ayuda a apreciar su complejidad y a utilizarla de manera más eficiente y segura.
+            </p>
+            <p class="text-lg">
+                Como se menciona en el video, estamos viviendo "el amanecer de la red", una era donde la comunicación verdaderamente une a las personas sin importar las fronteras geográficas, la raza, las creencias o el color.
+            </p>
+        </div>
+
+        <div class="bg-blue-50 rounded-lg shadow-md p-6 mb-10">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4">Recursos adicionales</h2>
+            <ul class="list-disc pl-6 space-y-2">
+                <li><a href="https://youtu.be/rw41W8crZ_Y?si=5cCe4xgfVa0o7ptZ" class="text-blue-600 hover:underline" target="_blank">Video original: "Guerreros de la Red" en español</a></li>
+                <li><a href="https://en.wikipedia.org/wiki/Internet_protocol_suite" class="text-blue-600 hover:underline" target="_blank">Wikipedia: Suite de protocolos de Internet</a></li>
+                <li><a href="https://www.cisco.com/c/es_mx/solutions/small-business/resource-center/networking/how-does-a-network-switch-work.html" class="text-blue-600 hover:underline" target="_blank">Cisco: ¿Cómo funciona un switch de red?</a></li>
+            </ul>
+        </div>
+
+        <footer class="text-center text-gray-600 mt-8">
+            <p>Prof. Esp. Santiago Hernández</p>
+            <p>Recurso educativo creado con fines didácticos - 2023 CC BY 4C</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stations = document.querySelectorAll('.journey-station');
+            const progressLine = document.getElementById('journey-progress');
+            const dataPacket = document.getElementById('data-packet');
+            const stationInfos = document.querySelectorAll('.station-info');
+            const stationTitle = document.getElementById('station-title');
+            const startButton = document.getElementById('start-journey');
+            const resetButton = document.getElementById('reset-journey');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            let currentStep = 0;
+            const stationPositions = [0, 14, 28, 42, 56, 70, 84, 100];
+            
+            startButton.addEventListener('click', function() {
+                if (currentStep === 0) {
+                    currentStep = 1;
+                    updateJourney();
+                    startButton.textContent = 'Siguiente estación';
+                    resetButton.classList.remove('hidden');
+                } else if (currentStep < 8) {
+                    currentStep++;
+                    updateJourney();
+                    if (currentStep === 8) {
+                        startButton.textContent = 'Completado';
+                        startButton.disabled = true;
+                        startButton.classList.add('bg-green-600');
+                        startButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    }
+                }
+            });
+            
+            resetButton.addEventListener('click', function() {
+                currentStep = 0;
+                updateJourney();
+                startButton.textContent = 'Iniciar viaje';
+                startButton.disabled = false;
+                startButton.classList.remove('bg-green-600');
+                startButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                resetButton.classList.add('hidden');
+                
+                // Reset station info
+                stationInfos.forEach(info => {
+                    info.classList.remove('show');
+                });
+                stationTitle.textContent = 'Selecciona una estación';
+                
+                // Reset stations
+                stations.forEach(station => {
+                    station.classList.remove('active');
+                });
+                
+                // Reset progress dots
+                progressDots.forEach(dot => {
+                    dot.classList.remove('active');
+                });
+            });
+            
+            stations.forEach(station => {
+                station.addEventListener('click', function() {
+                    const step = parseInt(this.getAttribute('data-step'));
+                    if (step <= currentStep) {
+                        // Update station info
+                        stationInfos.forEach(info => {
+                            info.classList.remove('show');
+                        });
+                        
+                        // Update stations
+                        stations.forEach(s => {
+                            s.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                        
+                        // Show corresponding info
+                        const infoId = `station-${step}`;
+                        document.getElementById(infoId).classList.add('show');
+                        
+                        // Update title
+                        stationTitle.textContent = this.querySelector('p').textContent;
+                    }
+                });
+            });
+            
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const step = parseInt(this.getAttribute('data-step'));
+                    if (step <= currentStep) {
+                        // Simulate click on the corresponding station
+                        stations[step-1].click();
+                    }
+                });
+            });
+            
+            function updateJourney() {
+                if (currentStep === 0) {
+                    progressLine.style.width = '0%';
+                    dataPacket.style.left = '0%';
+                } else {
+                    const progress = stationPositions[currentStep - 1];
+                    progressLine.style.width = `${progress}%`;
+                    dataPacket.style.left = `${progress}%`;
+                    
+                    // Update active station
+                    stations.forEach((station, index) => {
+                        if (index < currentStep) {
+                            station.classList.add('bg-blue-200');
+                        } else {
+                            station.classList.remove('bg-blue-200');
+                        }
+                    });
+                    
+                    // Update progress dots
+                    progressDots.forEach((dot, index) => {
+                        if (index < currentStep) {
+                            dot.classList.add('active');
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
+                    
+                    // Auto-click on the current station
+                    stations[currentStep - 1].click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
